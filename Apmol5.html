@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AraNotes | Laporan Praktikum 5 - Arsitektur Navigasi</title>
+    
+    <style>
+        /* ========== RESET & VARIABEL MODERN ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #EAF0EC;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            color: #2A3D30;
+            line-height: 1.5;
+            scroll-behavior: smooth;
+        }
+
+        /* Import Inter font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600&display=swap');
+
+        /* ========== PALET ELEGAN ========== */
+        :root {
+            --bg-base: #EAF0EC;
+            --bg-card: #FFFFFF;
+            --bg-dark: #2A3D30;
+            --bg-footer: #1F2E24;
+            --border-light: #DCE4DF;
+            --gold: #C9A84C;
+            --gold-soft: #DFC886;
+            --text-primary: #1E2D24;
+            --text-secondary: #4A6550;
+            --text-muted: #7A9E84;
+            --shadow-sm: 0 10px 25px -5px rgba(0, 0, 0, 0.03), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+            --shadow-md: 0 20px 25px -12px rgba(0, 0, 0, 0.05);
+        }
+
+        /* ========== TYPOGRAPHY ========== */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 500;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+        }
+
+        h1 { font-size: 3.5rem; font-weight: 600; }
+        h2 { font-size: 2rem; font-weight: 500; margin-bottom: 1.5rem; }
+        h3 { font-size: 1.5rem; font-weight: 500; }
+        
+        p { color: var(--text-secondary); margin-bottom: 1rem; }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* ========== LAYOUT ========== */
+        .container-modern {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        section {
+            padding: 5rem 0;
+        }
+
+        /* ========== NAVBAR (FIXED, BLUR) ========== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(42, 61, 48, 0.85);
+            backdrop-filter: blur(12px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 2rem;
+            z-index: 1100;
+            transition: all 0.3s;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .navbar h1 {
+            font-size: 1.8rem;
+            font-weight: 500;
+            color: #FFFFFF;
+            letter-spacing: -0.01em;
+        }
+
+        .navbar ul {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            margin: 0;
+        }
+
+        .navbar li a {
+            color: #EAF0EC;
+            font-weight: 450;
+            font-size: 0.95rem;
+            transition: 0.2s;
+            letter-spacing: 0.3px;
+        }
+
+        .navbar li a:hover {
+            color: var(--gold);
+        }
+
+        /* ========== CARDS ELEGAN ========== */
+        .card-modern {
+            background: var(--bg-card);
+            border-radius: 28px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+            transition: all 0.25s ease;
+            margin-bottom: 2rem;
+        }
+
+        .card-modern:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* ========== BUTTON ========== */
+        .btn-gold {
+            background: var(--gold);
+            color: #1E2D24;
+            padding: 0.7rem 1.8rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-gold:hover {
+            background: #B8923A;
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 0.7rem 1.8rem;
+            border-radius: 40px;
+            font-weight: 500;
+            transition: 0.2s;
+            display: inline-block;
+        }
+
+        .btn-outline:hover {
+            background: var(--gold);
+            color: #1E2D24;
+        }
+
+        /* ========== HERO SECTION ========== */
+        .hero {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 3rem;
+            margin-top: 100px;
+            padding: 2rem 0;
+        }
+
+        .hero-content {
+            flex: 1;
+            background: var(--bg-card);
+            border-radius: 32px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+        }
+
+        .hero-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .hero-content h3 {
+            color: var(--text-secondary);
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+        }
+
+        .quote-text {
+            border-left: 3px solid var(--gold);
+            padding-left: 1.2rem;
+            font-style: normal;
+            color: var(--text-secondary);
+            margin: 1.5rem 0;
+        }
+
+        /* ========== ELEMENT TAMBAHAN LAPORAN ========== */
+        .badge-tools {
+            background-color: var(--gold-soft);
+            color: var(--text-primary);
+            padding: 6px 14px;
+            border-radius: 40px;
+            display: inline-block;
+            margin: 5px 5px 5px 0;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        ul.laporan-list {
+            padding-left: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-secondary);
+        }
+        
+        ul.laporan-list li {
+            margin-bottom: 0.5rem;
+        }
+
+        pre {
+            background-color: #F8FAF9;
+            padding: 1.5rem;
+            border-radius: 20px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            border: 1px solid var(--border-light);
+            margin: 1.5rem 0;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        code {
+            background-color: var(--bg-base);
+            padding: 3px 8px;
+            border-radius: 8px;
+            color: var(--bg-dark);
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: var(--text-secondary);
+            font-weight: normal;
+            font-size: 0.95em;
+        }
+
+        .text-center { text-align: center; }
+        .mt-4 { margin-top: 1.5rem; }
+
+        /* ========== FOOTER ========== */
+        footer {
+            background: var(--bg-footer);
+            color: #C2D9C8;
+            text-align: center;
+            padding: 3.5rem 2rem;
+            margin-top: 4rem;
+            font-size: 0.9rem;
+            border-radius: 40px 40px 0 0;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .footer-links span {
+            color: var(--gold-soft);
+            font-weight: 500;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 0.5rem;
+                padding: 1rem;
+            }
+            .navbar ul {
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                margin-top: 120px;
+            }
+            .hero-content {
+                text-align: left;
+                padding: 1.5rem;
+            }
+            .hero-content h1 { font-size: 2rem; }
+            h2 { font-size: 1.6rem; }
+            section {
+                padding: 3.5rem 0;
+            }
+            .container-modern {
+                padding: 0 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar Modern -->
+<nav class="navbar">
+    <h1>AraNotes</h1>
+    <ul>
+        <li><a href="portofolio.html">Portofolio</a></li>
+        <li><a href="#">Laporan Praktikum</a></li>
+    </ul>
+</nav>
+
+<!-- Konten Utama -->
+<div class="container-modern">
+    
+    <section class="hero">
+        <div style="width: 100%;">
+            <a href="portofolio.html" class="btn-outline" style="margin-bottom: 2rem;">
+                ← Kembali ke Portofolio
+            </a>
+            <div class="hero-content">
+                <h1>📘 Laporan Praktikum 5: Arsitektur Navigasi</h1>
+                <h3>Named Routes & Bottom Navigation Bar</h3>
+                <p class="quote-text">Tiara Azizah | Informatika 24 - Universitas Andalas</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="main-content">
+        <!-- BAB I: PENDAHULUAN -->
+        <div class="card-modern">
+            <h2>📖 BAB I: Pendahuluan</h2>
+            <h3>1.1 Tujuan Praktikum</h3>
+            <p>Praktikum ini memiliki beberapa tujuan utama dalam pengembangan arsitektur aplikasi mobile, yaitu:</p>
+            <ul class="laporan-list">
+                <li>Menerapkan <code>Named Routes</code> untuk navigasi terpusat dan rapi[cite: 20].</li>
+                <li>Membangun menu bawah (<code>Bottom NavigationBar</code>) ala aplikasi modern[cite: 20].</li>
+                <li>Mengintegrasikan Dashboard, Riwayat, dan Profil dalam satu wadah[cite: 20].</li>
+            </ul>
+
+            <h3 class="mt-4">1.2 Alat dan Lingkungan Kerja</h3>
+            <div style="margin-top: 10px;">
+                <span class="badge-tools">Flutter SDK[cite: 20]</span>
+                <span class="badge-tools">VS Code / Android Studio[cite: 20]</span>
+                <span class="badge-tools">Android Emulator / Device[cite: 20]</span>
+            </div>
+        </div>
+
+        <!-- BAB II: DASAR TEORI -->
+        <div class="card-modern">
+            <h2>📖 BAB II: Dasar Teori</h2>
+            <p>Dalam pengelolaan struktur navigasi lanjutan pada Flutter, terdapat beberapa komponen utama yang dipelajari:</p>
+            <ul class="laporan-list">
+                <li><strong>Named Routes:</strong> Mendefinisikan nama string untuk setiap halaman di dalam <code>MaterialApp</code>. Hal ini mencegah *spaghetti code* saat aplikasi memiliki banyak layar[cite: 20]. <code>routes</code> berfungsi sebagai tabel peta rute aplikasi, sedangkan <code>initialRoute</code> menentukan halaman pertama yang dimuat (<code>'/'</code>)[cite: 20].</li>
+                <li><strong>Bottom Navigation Bar:</strong> Menu navigasi di bagian bawah layar yang mengontrol tampilan utama (<code>body</code>) tanpa berpindah <code>Scaffold</code> secara penuh[cite: 20]. Parameter <code>currentIndex</code> melacak indeks tab aktif, sementara <code>items</code> memuat daftar ikon serta label tab[cite: 20, 21].</li>
+            </ul>
+        </div>
+
+        <!-- BAB III: LANGKAH KERJA & IMPLEMENTASI -->
+        <div class="card-modern">
+            <h2>🛠️ BAB III: Langkah Kerja & Implementasi</h2>
+            <p>Pada praktikum ini, struktur aplikasi dikembangkan menggunakan pendekatan terpusat untuk rute serta manajemen state tab navigasi bawah.</p>
+
+            <h3 class="mt-4">📌 3.1 Mendaftarkan Named Routes di <code>main.dart</code></h3>
+            <p>Parameter <code>home</code> pada <code>MaterialApp</code> dihapus dan digantikan dengan <code>initialRoute</code> serta <code>routes</code> untuk memetakan rute navigasi aplikasi[cite: 21, 23].</p>
+            <pre><code>MaterialApp(
+  debugShowCheckedModeBanner: false,
+  title: 'Expense Tracker Final',
+  theme: ThemeData(primarySwatch: Colors.amber),
+  initialRoute: '/',
+  routes: {
+    '/': (context) => const MainScreen(),
+    '/add': (context) => const AddTransactionScreen(),
+  },
+)</code></pre>
+
+            <h3 class="mt-4">📌 3.2 Membuat Penampung Tab (<code>main_screen.dart</code>)</h3>
+            <p>File ini menggunakan <code>StatefulWidget</code> guna menangani perubahan status indeks tab aktif (<code>_selectedIndex</code>) dan menampung daftar halaman utama seperti Dashboard, Riwayat, serta Profil[cite: 21, 24].</p>
+            <pre><code>class MainScreenState extends State&lt;MainScreen&gt; {
+  int _selectedIndex = 0;
+  
+  final List&lt;Widget&gt; _pages = [
+    const DashboardScreen(),
+    const Center(child: Text("Halaman Riwayat")),
+    const Center(child: Text("Halaman Profil")),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _pages[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        selectedItemColor: Colors.amber[800],
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Beranda'),
+          BottomNavigationBarItem(icon: Icon(Icons.history), label: 'Riwayat'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
+        ],
+      ),
+    );
+  }
+}</code></pre>
+
+            <h3 class="mt-4">📌 3.3 Pemanggilan Rute via FloatingActionButton</h3>
+            <p>Pada file <code>dashboard_screen.dart</code>, fungsi navigasi tombol tambah transaksi diubah agar memanggil rute terpusat yang telah didaftarkan[cite: 24, 25]:</p>
+            <pre><code>floatingActionButton: FloatingActionButton(
+  backgroundColor: Colors.amber,
+  child: const Icon(Icons.add),
+  onPressed: () {
+    Navigator.pushNamed(context, '/add');
+  },
+)</code></pre>
+        </div>
+
+        <!-- BAB IV: KESIMPULAN -->
+        <div class="card-modern">
+            <h2>✅ BAB IV: Kesimpulan</h2>
+            <p>Melalui praktikum ini, penerapan <code>Named Routes</code> berhasil diintegrasikan untuk membuat manajemen rute dan navigasi aplikasi menjadi lebih terstruktur, terpusat, serta menghindari kerumitan pemanggilan halaman secara langsung[cite: 20]. Kombinasi dengan <code>Bottom Navigation Bar</code> memungkinkan perpindahan antar menu utama (Beranda, Riwayat, dan Profil) berjalan secara mulus dalam satu kerangka antarmuka yang efisien.</p>
+        </div>
+
+        <!-- TAUTAN REPOSITORI -->
+        <div class="card-modern text-center" style="background-color: var(--bg-base); border: 2px dashed var(--border-light);">
+            <h2 style="margin-bottom: 1rem;">🔗 Tautan Repositori GitHub</h2>
+            <p style="margin-bottom: 1.5rem;">Kode sumber lengkap dari praktikum ini tersedia dan dapat diakses publik.</p>
+            <a href="https://github.com/tiaraara09/AraNotes" target="_blank" class="btn-gold">
+                Kunjungi Repo GitHub →
+            </a>
+            <a href="https://drive.google.com/file/d/1cy0idmZpV3m_vFS2fa9XI_b6PGHGk4hq/view?usp=sharing" target="_blank" class="btn-gold">
+                Kunjungi Video Demo Aplikasi →
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<footer>
+    <h3 style="color: var(--gold); margin-bottom: 10px;">Praktikum Pemrograman Mobile (Arsitektur Navigasi)</h3>
+    <p style="color: #C2D9C8;">Informatika 24 - Universitas Andalas</p>
+    
+    <div class="footer-links">
+        <span>Tiara Azizah</span>
+        <span>tiaraara09</span>
+        <span>tiara_araazh</span>
+        <span>Uishky</span>
+    </div>
+    
+    <p style="margin-top: 2rem; color: var(--text-muted);">© 2026 - Laporan Praktikum Flutter</p>
+</footer>
+
+</body>
+</html>
